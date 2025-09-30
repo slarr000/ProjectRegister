@@ -1,0 +1,17 @@
+{
+    "name": "projectregister/projectregister",
+    "description": "Slim Framework authentication project",
+    "type": "project",
+    "require": {
+        "slim/slim": "^4.0",
+        "slim/psr7": "^1.6",
+        "respect/validation": "^2.2",
+      "ext-pdo": "*",
+        "slim/http": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "ProjectRegister\\": "src/"
+        }
+    }
+}

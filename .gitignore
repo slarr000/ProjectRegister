@@ -1,0 +1,14 @@
+/vendor/
+.idea/
+*.log
+.env
+.DS_Store
+config.php
+logs/
+composer.lock
+*.swp
+*.swo
+/thumbs.db
+/.vscode
+/.vs
+/.history
