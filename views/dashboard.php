@@ -14,6 +14,51 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 	<link href="/assets/style/style.css" rel="stylesheet">
+
+	<style>
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .info-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            border-radius: 15px;
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .welcome-animation {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .timezone-badge {
+            font-size: 0.7rem;
+            background: #6c757d;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+        }
+	</style>
 </head>
 <body class="dashboard-body d-flex flex-column min-vh-100">
 <!-- Навигация -->
@@ -53,7 +98,7 @@
 					<div class="card-body text-center p-4 p-md-5">
 						<!-- Аватар и приветствие -->
 						<div class="mb-4">
-							<div class="user-avatar bg-primary text-white mx-auto mb-3">
+							<div class="user-avatar">
 								<i class="fas fa-user fa-lg"></i>
 							</div>
 							<h1 class="h2 fw-bold text-primary mb-2">Добро пожаловать!</h1>
@@ -69,15 +114,28 @@
 							<div class="col-6">
 								<div class="info-card p-3 rounded-3 border text-center">
 									<i class="fas fa-calendar-check text-primary fa-lg mb-2"></i>
-									<div class="fw-bold fs-5"><?= date('d.m.Y') ?></div>
+									<div class="fw-bold fs-5 current-date">
+                                        <?php
+                                        // Московское время для даты
+                                        $moscowTime = new DateTime('now', new DateTimeZone('Europe/Moscow'));
+                                        echo $moscowTime->format('d.m.Y');
+                                        ?>
+									</div>
 									<small class="text-muted">Сегодня</small>
 								</div>
 							</div>
 							<div class="col-6">
 								<div class="info-card p-3 rounded-3 border text-center">
 									<i class="fas fa-clock text-success fa-lg mb-2"></i>
-									<div class="fw-bold fs-5"><?= date('H:i') ?></div>
-									<small class="text-muted">Время</small>
+									<div class="fw-bold fs-5 current-time">
+                                        <?php
+                                        // Московское время
+                                        $moscowTime = new DateTime('now', new DateTimeZone('Europe/Moscow'));
+                                        echo $moscowTime->format('H:i');
+                                        ?>
+										<span class="timezone-badge">MSK</span>
+									</div>
+									<small class="text-muted">Московское время</small>
 								</div>
 							</div>
 						</div>
@@ -115,6 +173,30 @@
 <!-- Скрипты -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-<script src="/assets/js/dashboard.js"></script>
+<script>
+    // Функция для обновления московского времени в реальном времени
+    function updateMoscowTime() {
+        const now = new Date();
+
+        // Москва UTC+3 (летнее время может быть UTC+4)
+        // Для простоты используем фиксированное смещение +3 часа
+        const moscowOffset = 3 * 60 * 60 * 1000; // 3 часа в миллисекундах
+        const moscowTime = new Date(now.getTime() + moscowOffset);
+
+        const timeElement = document.querySelector('.current-time');
+        if (timeElement) {
+            const hours = moscowTime.getUTCHours().toString().padStart(2, '0');
+            const minutes = moscowTime.getUTCMinutes().toString().padStart(2, '0');
+            timeElement.innerHTML = `${hours}:${minutes} <span class="timezone-badge">MSK</span>`;
+        }
+    }
+
+    // Обновляем время сразу при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        updateMoscowTime();
+        // Обновляем время каждую минуту
+        setInterval(updateMoscowTime, 60000);
+    });
+</script>
 </body>
 </html>
