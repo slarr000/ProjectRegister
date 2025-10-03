@@ -3,6 +3,9 @@ require __DIR__ . '/../vendor/autoload.php';
 
 
 use ProjectRegister\Models\User;
+use ProjectRegister\Controllers\AuthController;
+use ProjectRegister\Validation\AuthValidator;
+use ProjectRegister\Middleware\AuthMiddleware;
 use Slim\Psr7\Response;
 use Slim\Psr7\Factory\ResponseFactory;
 
