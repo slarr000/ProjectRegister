@@ -1,45 +1,120 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="h-100">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Личный кабинет ProjectRegister - система регистрации и аутентификации">
 	<title>ProjectRegister - Личный кабинет</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Bootstrap 5.3 с integrity hash -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		  integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+	<!-- Font Awesome для иконок -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 	<link href="/assets/style/style.css" rel="stylesheet">
 </head>
-<body class="dashboard-body">
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<body class="dashboard-body d-flex flex-column min-vh-100">
+<!-- Навигация -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
 	<div class="container">
-		<a class="navbar-brand fw-bold" href="/dashboard">ProjectRegister</a>
-		<div class="navbar-nav ms-auto">
-			<a class="nav-link" href="/logout">Выйти</a>
+		<a class="navbar-brand fw-bold d-flex align-items-center" href="/dashboard">
+			<i class="fas fa-project-diagram me-2"></i>
+			ProjectRegister
+		</a>
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<div class="navbar-nav ms-auto">
+                    <span class="nav-item nav-link disabled d-none d-md-block">
+                        <i class="fas fa-user me-1"></i>
+                        <?= htmlspecialchars($_SESSION['username'] ?? 'Гость') ?>
+                    </span>
+				<a class="nav-link" href="/logout" aria-label="Выйти из системы">
+					<i class="fas fa-sign-out-alt me-1"></i>Выйти
+				</a>
+			</div>
 		</div>
 	</div>
 </nav>
 
-<div class="container mt-5">
-	<div class="row justify-content-center">
-		<div class="col-md-8 col-lg-6">
-			<div class="card dashboard-card">
-				<div class="card-body text-center p-5">
-					<div class="mb-4">
-						<h1 class="display-6 fw-bold text-primary">Добро пожаловать!</h1>
+<!-- Основной контент -->
+<main class="flex-grow-1 py-5">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-12 col-md-10 col-lg-8 col-xl-6">
+				<!-- Карточка приветствия -->
+				<div class="card dashboard-card border-0 shadow-lg welcome-animation">
+					<div class="card-body text-center p-4 p-md-5">
+						<!-- Аватар и приветствие -->
+						<div class="mb-4">
+							<div class="user-avatar bg-primary text-white mx-auto mb-3">
+								<i class="fas fa-user fa-lg"></i>
+							</div>
+							<h1 class="h2 fw-bold text-primary mb-2">Добро пожаловать!</h1>
+							<p class="lead text-muted">
+                                    <span class="fw-semibold text-dark username-highlight">
+                                        <?= htmlspecialchars($_SESSION['username'] ?? 'Гость') ?>
+                                    </span>, это ваш личный кабинет
+							</p>
+						</div>
+
+						<!-- Информационная панель -->
+						<div class="row g-3 mb-4">
+							<div class="col-6">
+								<div class="info-card p-3 rounded-3 border text-center">
+									<i class="fas fa-calendar-check text-primary fa-lg mb-2"></i>
+									<div class="fw-bold fs-5"><?= date('d.m.Y') ?></div>
+									<small class="text-muted">Сегодня</small>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="info-card p-3 rounded-3 border text-center">
+									<i class="fas fa-clock text-success fa-lg mb-2"></i>
+									<div class="fw-bold fs-5"><?= date('H:i') ?></div>
+									<small class="text-muted">Время</small>
+								</div>
+							</div>
+						</div>
+
+						<!-- Действия -->
+						<div class="d-grid gap-2 d-md-flex justify-content-md-center">
+							<a href="/logout" class="btn btn-danger btn-lg px-4 py-2 logout-btn" role="button">
+								<i class="fas fa-sign-out-alt me-2"></i>Выйти из системы
+							</a>
+						</div>
 					</div>
-					<p class="fw-bold fs-4 mb-4">
-                        <span class="text-dark">
-                            <?php
-                            // Используем сессию вместо глобальной переменной
-                            echo htmlspecialchars($_SESSION['username'] ?? 'Гость');
-                            ?>
-                        </span>, это ваш личный кабинет
+				</div>
+
+				<!-- Дополнительная информация -->
+				<div class="mt-4 text-center">
+					<p class="text-muted small">
+						<i class="fas fa-info-circle me-1"></i>
+						Ваш аккаунт создан для безопасного доступа к системе
 					</p>
-					<a href="/logout" class="btn btn-danger btn-lg px-4">
-						Выйти
-					</a>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
+</main>
+
+<!-- Подвал -->
+<footer class="bg-light py-3 mt-auto">
+	<div class="container text-center">
+		<p class="text-muted mb-0 small">
+			&copy; <?= date('Y') ?> ProjectRegister. Все права защищены.
+		</p>
+	</div>
+</footer>
+
+<!-- Скрипты -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="/assets/js/dashboard.js"></script>
 </body>
 </html>
