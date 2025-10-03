@@ -1,17 +1,22 @@
 {
-    "name": "projectregister/projectregister",
-    "description": "Slim Framework authentication project",
+    "name": "slarr000/projectregister",
+    "description": "User registration and authentication system with Slim Framework",
     "type": "project",
+    "keywords": ["slim", "authentication", "registration", "php"],
     "require": {
+        "php": "^8.0",
         "slim/slim": "^4.0",
-        "slim/psr7": "^1.6",
-        "respect/validation": "^2.2",
-      "ext-pdo": "*",
-        "slim/http": "^1.4"
+        "slim/psr7": "^1.0",
+      "ext-pdo": "*"
     },
     "autoload": {
         "psr-4": {
             "ProjectRegister\\": "src/"
         }
+    },
+    "config": {
+        "process-timeout": 0,
+        "sort-packages": true,
+        "optimize-autoloader": true
     }
 }
