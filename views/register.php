@@ -37,7 +37,7 @@
 					</form>
 
 					<div class="text-center mt-3">
-						<!-- ИСПРАВЛЕНО: добавлен слеш перед login -->
+						
 						<a href="/login" class="text-decoration-none">Уже есть аккаунт? Войдите</a>
 					</div>
 
@@ -48,7 +48,7 @@
 	</div>
 </div>
 
-<!-- ИСПРАВЛЕНО: подключаем auth.js вместо main.js -->
+
 <script src="/assets/js/main.js"></script>
 </body>
 </html>
