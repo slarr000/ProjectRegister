@@ -48,7 +48,7 @@ class User
         }
     }
 
-    // Остальные методы остаются без изменений...
+    
     public function findByUsername($username)
     {
         try {
