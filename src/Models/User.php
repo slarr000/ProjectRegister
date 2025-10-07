@@ -9,22 +9,28 @@ class User
     private $db;
     private $table = 'users';
 
-    public function __construct()
+    public function __construct(PDO $db = null)
+    {
+        if ($db) {
+            $this->db = $db;
+        } else {
+            $this->initializeDatabase();
+        }
+    }
+
+    private function initializeDatabase(): void
     {
         try {
-            // Подключаем конфигурацию
             $configPath = __DIR__ . '/../../app/config.php';
             if (!file_exists($configPath)) {
                 throw new \Exception("Config file not found: " . $configPath);
             }
             require_once $configPath;
 
-            // Проверяем, что константы определены
             if (!defined('DB_HOST') || !defined('DB_NAME') || !defined('DB_USER') || !defined('DB_PASS')) {
                 throw new \Exception("Database configuration constants are not defined");
             }
 
-            // Создаем подключение
             $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
             if (defined('DB_PORT') && DB_PORT) {
                 $dsn .= ";port=" . DB_PORT;
@@ -36,7 +42,9 @@ class User
                 PDO::ATTR_EMULATE_PREPARES => false
             ]);
 
-            error_log("✅ Database connected successfully to: " . DB_NAME);
+            if ($_ENV['APP_ENV'] ?? 'production' === 'development') {
+                error_log("✅ Database connected successfully to: " . DB_NAME);
+            }
 
         } catch (PDOException $e) {
             $error = "❌ Database connection failed: " . $e->getMessage();
@@ -48,21 +56,14 @@ class User
         }
     }
 
-    
-    public function findByUsername($username)
+    public function findByUsername(string $username): ?array
     {
         try {
             $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE username = ?");
             $stmt->execute([$username]);
             $user = $stmt->fetch();
 
-            if ($user) {
-                error_log("✅ User found: " . $username);
-            } else {
-                error_log("❌ User not found: " . $username);
-            }
-
-            return $user;
+            return $user ?: null;
 
         } catch (PDOException $e) {
             error_log("❌ Database error in findByUsername: " . $e->getMessage());
@@ -70,45 +71,45 @@ class User
         }
     }
 
-    public function findById($id)
+    public function findById(int $id): ?array
     {
         try {
             $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id = ?");
             $stmt->execute([$id]);
-            return $stmt->fetch();
+            return $stmt->fetch() ?: null;
         } catch (PDOException $e) {
             error_log("❌ Database error in findById: " . $e->getMessage());
-            return false;
+            return null;
         }
     }
 
-    public function create($username, $password)
+    public function create(string $username, string $password): ?int
     {
         try {
-            // Хешируем пароль
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             if ($hashedPassword === false) {
                 throw new \Exception("Password hashing failed");
             }
 
-            // Вставляем пользователя
             $stmt = $this->db->prepare("INSERT INTO {$this->table} (username, password) VALUES (?, ?)");
             $result = $stmt->execute([$username, $hashedPassword]);
 
             if ($result) {
-                $userId = $this->db->lastInsertId();
-                error_log("✅ User created successfully: " . $username . " (ID: " . $userId . ")");
+                $userId = (int)$this->db->lastInsertId();
+
+                if ($_ENV['APP_ENV'] ?? 'production' === 'development') {
+                    error_log("✅ User created successfully: " . $username . " (ID: " . $userId . ")");
+                }
+
                 return $userId;
             }
 
-            error_log("❌ User creation failed: " . $username);
-            return false;
+            return null;
 
         } catch (PDOException $e) {
-            // Ошибка дублирования пользователя
             if ($e->getCode() == '23000') {
                 error_log("❌ User already exists: " . $username);
-                return false;
+                return null;
             }
 
             error_log("❌ Database error in create: " . $e->getMessage());
@@ -116,21 +117,18 @@ class User
         }
     }
 
-    public function getAllUsers()
+    public function getAllUsers(): array
     {
         try {
             $stmt = $this->db->query("SELECT id, username, created_at FROM {$this->table} ORDER BY created_at DESC");
-            $users = $stmt->fetchAll();
-            error_log("✅ Retrieved " . count($users) . " users from database");
-            return $users;
+            return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("❌ Database error in getAllUsers: " . $e->getMessage());
             return [];
         }
     }
 
-    // Проверка существования таблицы
-    public function checkTableExists()
+    public function checkTableExists(): bool
     {
         try {
             $stmt = $this->db->query("SELECT 1 FROM {$this->table} LIMIT 1");
@@ -139,5 +137,10 @@ class User
             error_log("❌ Table check failed: " . $e->getMessage());
             return false;
         }
+    }
+
+    public function getDatabase(): PDO
+    {
+        return $this->db;
     }
 }
