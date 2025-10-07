@@ -10,15 +10,15 @@ class AuthController
 {
     private $user;
     private $viewsPath;
-    private  $validator;
+ 
 
 
-   public function __construct(User $user, AuthValidator $validator = null)
+    public function __construct()
     {
-        $this->user = $user;
-        $this->validator = $validator;
+        $this->user = new User();
         $this->viewsPath = __DIR__ . '/../../views/';
     }
+
 
     public function showHome(Request $request, Response $response): Response
     {
