@@ -61,66 +61,6 @@ function jsonResponse($response, $data, $status = 200) {
     return $response->withStatus($status)->withHeader('Content-Type', 'application/json');
 }
 
-// ========== ЗАГРУЗКА МАРШРУТОВ ==========
-
 // Подключаем файл с маршрутами
 require __DIR__ . '/../app/routes.php';
-
-// ========== ОТЛАДОЧНЫЕ МАРШРУТЫ ==========
-
-$app->get('/debug/simple-test', function ($request, $response) {
-    error_log("Simple test called");
-    return jsonResponse($response, [
-        'status' => 'OK',
-        'message' => 'Slim works perfectly!',
-        'timestamp' => time()
-    ]);
-});
-
-$app->get('/debug/db-connect-test', function ($request, $response) use ($userModel) {
-    error_log("DB connect test started");
-    try {
-        return jsonResponse($response, [
-            'status' => 'SUCCESS',
-            'message' => 'Database connection successful',
-            'table_exists' => $userModel->checkTableExists()
-        ]);
-    } catch (Exception $e) {
-        error_log("DB connect test failed: " . $e->getMessage());
-        return jsonResponse($response, [
-            'status' => 'ERROR',
-            'message' => 'Database connection failed',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-});
-
-$app->get('/debug/create-test-user', function ($request, $response) use ($userModel) {
-    try {
-        $testUsername = 'testuser_' . time();
-        $testPassword = 'test123';
-        $userId = $userModel->create($testUsername, $testPassword);
-
-        if ($userId) {
-            return jsonResponse($response, [
-                'status' => 'SUCCESS',
-                'message' => 'Test user created',
-                'user_id' => $userId,
-                'username' => $testUsername
-            ]);
-        } else {
-            return jsonResponse($response, [
-                'status' => 'ERROR',
-                'message' => 'Failed to create test user'
-            ], 500);
-        }
-    } catch (Exception $e) {
-        return jsonResponse($response, [
-            'status' => 'ERROR',
-            'message' => 'Error creating test user',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-});
-
 $app->run();
