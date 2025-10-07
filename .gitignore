@@ -5,7 +5,6 @@
 .DS_Store
 config.php
 logs/
-composer.lock
 *.swp
 *.swo
 /thumbs.db
