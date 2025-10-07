@@ -10,10 +10,13 @@ class AuthController
 {
     private $user;
     private $viewsPath;
+    private  $validator;
 
-    public function __construct()
+
+   public function __construct(User $user, AuthValidator $validator = null)
     {
-        $this->user = new User();
+        $this->user = $user;
+        $this->validator = $validator;
         $this->viewsPath = __DIR__ . '/../../views/';
     }
 
